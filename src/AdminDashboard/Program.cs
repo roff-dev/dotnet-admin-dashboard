@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using AdminDashboard.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using AdminDashboard.Data.Seeding;  // Add this using statement
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,5 +49,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Add this line to seed the database
+await app.SeedDatabaseAsync();
 
 app.Run();
