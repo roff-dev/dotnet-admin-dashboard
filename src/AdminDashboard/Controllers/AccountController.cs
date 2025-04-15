@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace AdminDashboard.Controllers
@@ -8,15 +9,18 @@ namespace AdminDashboard.Controllers
     public class AccountController : Controller
     {
         [HttpGet]
-        public IActionResult Login()
+        [AllowAnonymous] // Important: Allow anonymous access to login
+        public IActionResult Login(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        [AllowAnonymous] // Important: Allow anonymous access to login
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(string username, string password, string returnUrl = null)
         {
-            // Validate the user credentials
             if (username == "admin" && password == "password")
             {
                 var claims = new List<Claim>
@@ -25,20 +29,29 @@ namespace AdminDashboard.Controllers
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties();
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
 
+                if (Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
                 return RedirectToAction("Index", "Home");
             }
 
-            ViewBag.Error = "Invalid username or password";
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Login");
         }
     }
 }

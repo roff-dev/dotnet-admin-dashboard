@@ -15,9 +15,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login"; // Redirect to this path for login
-        options.AccessDeniedPath = "/Account/AccessDenied"; // Redirect to this path for access denied
-        options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter; // Default is "ReturnUrl"
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.Cookie.Name = "AdminDashboard"; // Add this line
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.SlidingExpiration = true;
     });
 
 builder.Services.AddControllersWithViews(options =>
