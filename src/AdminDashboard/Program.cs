@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using AdminDashboard.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using AdminDashboard.Data.Seeding;  // Add this using statement
+using AdminDashboard.Data.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,20 +17,33 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
-        options.Cookie.Name = "AdminDashboard"; // Add this line
+        options.Cookie.Name = "AdminDashboard";
         options.Cookie.HttpOnly = true;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
         options.SlidingExpiration = true;
     });
 
-builder.Services.AddControllersWithViews(options =>
+// Modified this section to include runtime compilation
+if (builder.Environment.IsDevelopment())
 {
-    // Require authentication globally
-    var policy = new AuthorizationPolicyBuilder()
-                     .RequireAuthenticatedUser()
-                     .Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
-});
+    builder.Services.AddControllersWithViews(options =>
+    {
+        var policy = new AuthorizationPolicyBuilder()
+                         .RequireAuthenticatedUser()
+                         .Build();
+        options.Filters.Add(new AuthorizeFilter(policy));
+    }).AddRazorRuntimeCompilation();
+}
+else
+{
+    builder.Services.AddControllersWithViews(options =>
+    {
+        var policy = new AuthorizationPolicyBuilder()
+                         .RequireAuthenticatedUser()
+                         .Build();
+        options.Filters.Add(new AuthorizeFilter(policy));
+    });
+}
 
 var app = builder.Build();
 
@@ -46,7 +59,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Add authentication middleware
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
