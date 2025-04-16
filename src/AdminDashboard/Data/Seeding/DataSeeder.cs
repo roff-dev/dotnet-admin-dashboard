@@ -21,21 +21,21 @@ namespace AdminDashboard.Data.Seeding
                 {
                     Name = "Banana Computer, Inc",
                     Email = "banana@notapple.com",
-                    Logo = "https://via.placeholder.com/150",
+                    Logo = "https://placehold.co/150",
                     Website = "https://bananacomputer.com"
                 },
                 new Company
                 {
                     Name = "Doodle LLC",
                     Email = "info@doodle.com",
-                    Logo = "https://via.placeholder.com/150",
+                    Logo = "https://placehold.co/150",
                     Website = "https://doodle.com"
                 },
                 new Company
                 {
                     Name = "Beta Platforms, Inc",
                     Email = "hello@facecook.com",
-                    Logo = "https://via.placeholder.com/150",
+                    Logo = "https://placehold.co/150",
                     Website = "https://facecook.com"
                 }
             };
@@ -53,7 +53,7 @@ namespace AdminDashboard.Data.Seeding
                     FirstName = "John",
                     LastName = "Doe",
                     Email = "john.doe@companyone.com",
-                    PhoneNumber = "123-456-7890",
+                    PhoneNumber = "01234567890",
                     CompanyId = companies[0].Id
                 },
                 new Employee
@@ -61,7 +61,7 @@ namespace AdminDashboard.Data.Seeding
                     FirstName = "Jane",
                     LastName = "Smith",
                     Email = "jane.smith@companyone.com",
-                    PhoneNumber = "123-456-7891",
+                    PhoneNumber = "01234567891",
                     CompanyId = companies[0].Id
                 },
 
@@ -71,7 +71,7 @@ namespace AdminDashboard.Data.Seeding
                     FirstName = "Mike",
                     LastName = "Johnson",
                     Email = "mike.johnson@companytwo.com",
-                    PhoneNumber = "123-456-7892",
+                    PhoneNumber = "01234567892",
                     CompanyId = companies[1].Id
                 },
                 new Employee
@@ -79,7 +79,7 @@ namespace AdminDashboard.Data.Seeding
                     FirstName = "Sarah",
                     LastName = "Williams",
                     Email = "sarah.williams@companytwo.com",
-                    PhoneNumber = "123-456-7893",
+                    PhoneNumber = "01234567893",
                     CompanyId = companies[1].Id
                 },
 
@@ -89,7 +89,7 @@ namespace AdminDashboard.Data.Seeding
                     FirstName = "David",
                     LastName = "Brown",
                     Email = "david.brown@companythree.com",
-                    PhoneNumber = "123-456-7894",
+                    PhoneNumber = "01234567894",
                     CompanyId = companies[2].Id
                 },
                 new Employee
@@ -97,7 +97,7 @@ namespace AdminDashboard.Data.Seeding
                     FirstName = "Emily",
                     LastName = "Davis",
                     Email = "emily.davis@companythree.com",
-                    PhoneNumber = "123-456-7895",
+                    PhoneNumber = "01234567895",
                     CompanyId = companies[2].Id
                 }
             };
