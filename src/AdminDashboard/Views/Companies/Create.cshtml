@@ -25,10 +25,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Logo" class="control-label"></label>
-                    <input asp-for="Logo" class="form-control" type="file"/>
+                    <label asp-for="Logo" class="control-label">Logo URL (Optional)</label>
+                    <input asp-for="Logo" class="form-control" placeholder="https://example.com/logo.png" />
                     <span asp-validation-for="Logo" class="text-danger"></span>
-                    <small class="form-text text-muted">Logo(minimum size 100x100)</small>
+                    <small class="form-text text-muted">Enter a URL for an existing image (minimum size 100x100)</small>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LogoFile" class="control-label">Or Upload Logo</label>
+                    <input asp-for="LogoFile" type="file" class="form-control" accept="image/*" />
+                    <span asp-validation-for="LogoFile" class="text-danger"></span>
+                    <small class="form-text text-muted">Upload an image file (minimum size 100x100)</small>
                 </div>
 
                 <div class="form-group">
@@ -37,7 +44,7 @@
                     <span asp-validation-for="Website" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <button type="submit" class="btn btn-primary">Create</button>
                     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
                 </div>
