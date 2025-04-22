@@ -1,8 +1,104 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="dashboard">
+    <div class="jumbotron bg-light">
+        <h1 class="display-4">Admin Dashboard</h1>
+        <p class="lead">Manage your companies and employees.</p>
+    </div>
+
+    <div class="row">
+        <!-- Companies Card -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title">Companies</h5>
+                        <div class="display-4 text-primary">@ViewBag.CompanyCount</div>
+                    </div>
+                    <p class="card-text">View and manage company records, including contact information and logos.</p>
+                    <a asp-controller="Companies" asp-action="Index" class="btn btn-primary">Manage Companies</a>
+                    <a asp-controller="Companies" asp-action="Create" class="btn btn-outline-primary">Add New</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employees Card -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title">Employees</h5>
+                        <div class="display-4 text-success">@ViewBag.EmployeeCount</div>
+                    </div>
+                    <p class="card-text">View and manage employee records, including contact details and company assignments.</p>
+                    <a asp-controller="Employees" asp-action="Index" class="btn btn-success">Manage Employees</a>
+                    <a asp-controller="Employees" asp-action="Create" class="btn btn-outline-success">Add New</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="d-grid">
+                                <a asp-controller="Companies" asp-action="Create" class="btn btn-outline-primary btn-lg">
+                                    <i class="bi bi-building-add"></i> Add Company
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="d-grid">
+                                <a asp-controller="Employees" asp-action="Create" class="btn btn-outline-success btn-lg">
+                                    <i class="bi bi-person-plus"></i> Add Employee
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="d-grid">
+                                <a asp-controller="Companies" asp-action="Index" class="btn btn-outline-info btn-lg">
+                                    <i class="bi bi-search"></i> View Companies
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="d-grid">
+                                <a asp-controller="Employees" asp-action="Index" class="btn btn-outline-dark btn-lg">
+                                    <i class="bi bi-people"></i> View Employees
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        .dashboard .card {
+            transition: transform 0.3s;
+        }
+
+            .dashboard .card:hover {
+                transform: translateY(-5px);
+            }
+
+        .jumbotron {
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 0.3rem;
+        }
+    </style>
+}

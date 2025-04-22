@@ -1,20 +1,23 @@
-using System.Diagnostics;
-using AdminDashboard.Models;
 using Microsoft.AspNetCore.Mvc;
+using AdminDashboard.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace AdminDashboard.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewBag.CompanyCount = await _context.Companies.CountAsync();
+            ViewBag.EmployeeCount = await _context.Employees.CountAsync();
+
             return View();
         }
 
@@ -26,7 +29,7 @@ namespace AdminDashboard.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }
