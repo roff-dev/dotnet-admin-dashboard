@@ -25,7 +25,8 @@ namespace AdminDashboard.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
+            // Use ViewBag instead of ViewData to match your view
+            ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name");
             return View();
         }
 
@@ -34,14 +35,57 @@ namespace AdminDashboard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FirstName,LastName,CompanyId,Email,PhoneNumber")] Employee employee)
         {
-            if (ModelState.IsValid)
+            // Add logging to debug the issue
+            Console.WriteLine($"Create POST action called");
+            Console.WriteLine($"Employee FirstName: {employee.FirstName}");
+            Console.WriteLine($"Employee LastName: {employee.LastName}");
+            Console.WriteLine($"Employee CompanyId: {employee.CompanyId}");
+            Console.WriteLine($"Employee Email: {employee.Email}");
+            Console.WriteLine($"Employee PhoneNumber: {employee.PhoneNumber}");
+
+            // Check ModelState
+            if (!ModelState.IsValid)
             {
+                Console.WriteLine("ModelState is invalid:");
+                foreach (var state in ModelState)
+                {
+                    if (state.Value.Errors.Count > 0)
+                    {
+                        foreach (var error in state.Value.Errors)
+                        {
+                            Console.WriteLine($"- Error in {state.Key}: {error.ErrorMessage}");
+                        }
+                    }
+                }
+
+                // Re-populate the dropdown for the view
+                ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name", employee.CompanyId);
+                return View(employee);
+            }
+
+            try
+            {
+                Console.WriteLine("ModelState is valid, attempting to save employee");
                 _context.Add(employee);
-                await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync();
+                Console.WriteLine($"SaveChangesAsync completed, rows affected: {result}");
+
+                Console.WriteLine("Redirecting to Index");
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", employee.CompanyId);
-            return View(employee);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during save: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                }
+                ModelState.AddModelError("", "An error occurred while saving the employee.");
+
+                // Re-populate the dropdown for the view
+                ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name", employee.CompanyId);
+                return View(employee);
+            }
         }
 
         // GET: Employees/Edit/5
@@ -57,7 +101,7 @@ namespace AdminDashboard.Controllers
             {
                 return NotFound();
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", employee.CompanyId);
+            ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name", employee.CompanyId);
             return View(employee);
         }
 
@@ -172,7 +216,7 @@ namespace AdminDashboard.Controllers
             }
 
             Console.WriteLine("Preparing to re-render Edit view");
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", employee.CompanyId);
+            ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name", employee.CompanyId);
             return View(employee);
         }
 
@@ -201,8 +245,11 @@ namespace AdminDashboard.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
+            if (employee != null)
+            {
+                _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 

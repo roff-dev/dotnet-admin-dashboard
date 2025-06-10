@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;  // for validation attributes
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AdminDashboard.Models
 {
@@ -7,7 +7,7 @@ namespace AdminDashboard.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "First Name is required")]
-        [Display(Name = "First Name")]  // proper display name in forms
+        [Display(Name = "First Name")]
         [StringLength(50, ErrorMessage = "First Name cannot be longer than 50 characters")]
         public string FirstName { get; set; } = string.Empty;
 
@@ -26,7 +26,7 @@ namespace AdminDashboard.Models
         [Display(Name = "Phone Number")]
         public string? PhoneNumber { get; set; }
 
-        // Navigation property
-        public Company Company { get; set; } = null!;
+        // Navigation property - make this nullable to avoid validation issues
+        public Company? Company { get; set; }
     }
 }
