@@ -29,3 +29,48 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+@media (max-width: 576px) {
+    .dashboard .card-body .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+        .dashboard .card-body .btn:last-child {
+            margin-bottom: 0;
+        }
+}
+
+@media (min-width: 992px) {
+    .dashboard .card .card-body .row [class*="col-"] {
+        display: flex;
+        align-items: stretch;
+    }
+
+    .dashboard .card .card-body .d-grid {
+        height: 100%;
+        display: flex !important;
+    }
+
+        .dashboard .card .card-body .d-grid .btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+            white-space: normal;
+            text-align: center;
+        }
+}
+
+@media (max-width: 576px) {
+    /* Stack buttons vertically on mobile */
+    .dashboard .card-body {
+        text-align: center;
+    }
+}
+
+.dashboard .card .card-body .row [class*="col-"] .d-grid .btn {
+    padding: 0.75rem 1rem;
+    line-height: 1.4;
+}
