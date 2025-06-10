@@ -9,16 +9,17 @@
   <ItemGroup>
     <PackageReference Include="jQuery" Version="3.7.1" />
     <PackageReference Include="jQuery.Validation" Version="1.21.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.3.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Validation" Version="4.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.4" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.5" />
   </ItemGroup>
 
   <ItemGroup>

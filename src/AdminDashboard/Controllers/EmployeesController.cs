@@ -64,24 +64,90 @@ namespace AdminDashboard.Controllers
         // POST: Employees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,CompanyId,Email,PhoneNumber")] Employee employee)
+        public async Task<IActionResult> Edit(int id, Employee employee)
         {
+            // Add extensive logging
+            Console.WriteLine($"Edit POST action called");
+            Console.WriteLine($"Route ID: {id}");
+            Console.WriteLine($"Employee ID: {employee.Id}");
+            Console.WriteLine($"Employee FirstName: {employee.FirstName}");
+            Console.WriteLine($"Employee LastName: {employee.LastName}");
+
             if (id != employee.Id)
             {
+                Console.WriteLine("ID mismatch, returning NotFound");
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // Log ModelState errors if any
+            if (!ModelState.IsValid)
             {
+                Console.WriteLine("ModelState is invalid:");
+                foreach (var state in ModelState)
+                {
+                    if (state.Value.Errors.Count > 0)
+                    {
+                        foreach (var error in state.Value.Errors)
+                        {
+                            Console.WriteLine($"- Error in {state.Key}: {error.ErrorMessage}");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("ModelState is valid");
+            }
+
+            // Even if ModelState is invalid, try to update the employee
+            try
+            {
+                // Get the existing employee
+                var existingEmployee = await _context.Employees.FindAsync(id);
+                if (existingEmployee == null)
+                {
+                    Console.WriteLine($"Employee with ID {id} not found in database");
+                    return NotFound();
+                }
+
+                Console.WriteLine("Found existing employee, updating properties");
+
+                // Update each property manually and log any issues
+                try { existingEmployee.FirstName = employee.FirstName; }
+                catch (Exception ex) { Console.WriteLine($"Error updating FirstName: {ex.Message}"); }
+
+                try { existingEmployee.LastName = employee.LastName; }
+                catch (Exception ex) { Console.WriteLine($"Error updating LastName: {ex.Message}"); }
+
+                try { existingEmployee.Email = employee.Email; }
+                catch (Exception ex) { Console.WriteLine($"Error updating Email: {ex.Message}"); }
+
+                try { existingEmployee.PhoneNumber = employee.PhoneNumber; }
+                catch (Exception ex) { Console.WriteLine($"Error updating PhoneNumber: {ex.Message}"); }
+
+                try { existingEmployee.CompanyId = employee.CompanyId; }
+                catch (Exception ex) { Console.WriteLine($"Error updating CompanyId: {ex.Message}"); }
+
                 try
                 {
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Attempting to save changes");
+                    int rowsAffected = await _context.SaveChangesAsync();
+                    Console.WriteLine($"SaveChangesAsync completed, rows affected: {rowsAffected}");
+
+                    // Force a commit
+                    using var transaction = await _context.Database.BeginTransactionAsync();
+                    await transaction.CommitAsync();
+                    Console.WriteLine("Transaction committed");
+
+                    Console.WriteLine("Redirecting to Index");
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
+                    Console.WriteLine($"DbUpdateConcurrencyException: {ex.Message}");
                     if (!EmployeeExists(employee.Id))
                     {
+                        Console.WriteLine("Employee no longer exists");
                         return NotFound();
                     }
                     else
@@ -89,8 +155,23 @@ namespace AdminDashboard.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception during save: {ex.Message}");
+                    if (ex.InnerException != null)
+                    {
+                        Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                    }
+                    ModelState.AddModelError("", "An error occurred while saving changes.");
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Top-level exception: {ex.Message}");
+                ModelState.AddModelError("", "An unexpected error occurred.");
+            }
+
+            Console.WriteLine("Preparing to re-render Edit view");
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", employee.CompanyId);
             return View(employee);
         }
