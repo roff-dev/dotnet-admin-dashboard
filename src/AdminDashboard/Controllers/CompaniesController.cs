@@ -2,9 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using AdminDashboard.Data;
 using AdminDashboard.Models;
-using System.Drawing;  
-using System.IO;       
+using System.Drawing;
+using System.IO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AdminDashboard.Controllers
 {
@@ -177,29 +178,120 @@ namespace AdminDashboard.Controllers
             }
 
             var company = await _context.Companies
+                .Include(c => c.Employees) // Include employees to show count and details
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (company == null)
             {
                 return NotFound();
             }
 
-            return View(company);
+            // Create a view model with additional data
+            var viewModel = new CompanyDeleteViewModel
+            {
+                Company = company,
+                EmployeeCount = company.Employees.Count,
+                Employees = company.Employees.ToList(),
+                AvailableCompanies = await _context.Companies
+                    .Where(c => c.Id != id) // Exclude the company being deleted
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name
+                    })
+                    .ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         // POST: Companies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string deleteAction, int? reassignCompanyId)
         {
-            var company = await _context.Companies.FindAsync(id);
-            _context.Companies.Remove(company);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            Console.WriteLine($"Delete action: {deleteAction}, Reassign to: {reassignCompanyId}");
+
+            var company = await _context.Companies
+                .Include(c => c.Employees)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                if (deleteAction == "reassign" && reassignCompanyId.HasValue)
+                {
+                    // Reassign employees to another company
+                    var targetCompany = await _context.Companies.FindAsync(reassignCompanyId.Value);
+                    if (targetCompany == null)
+                    {
+                        TempData["ErrorMessage"] = "Selected company for reassignment not found.";
+                        return RedirectToAction(nameof(Delete), new { id = id });
+                    }
+
+                    Console.WriteLine($"Reassigning {company.Employees.Count} employees to company {targetCompany.Name}");
+
+                    foreach (var employee in company.Employees)
+                    {
+                        employee.CompanyId = reassignCompanyId.Value;
+                    }
+
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Employees reassigned successfully");
+                }
+                else if (deleteAction == "deleteAll")
+                {
+                    // Delete all employees with the company
+                    Console.WriteLine($"Deleting {company.Employees.Count} employees along with company");
+                    _context.Employees.RemoveRange(company.Employees);
+                }
+                else
+                {
+                    // Invalid action
+                    TempData["ErrorMessage"] = "Invalid delete action specified.";
+                    return RedirectToAction(nameof(Delete), new { id = id });
+                }
+
+                // Remove the company
+                _context.Companies.Remove(company);
+                await _context.SaveChangesAsync();
+
+                if (deleteAction == "reassign")
+                {
+                    TempData["SuccessMessage"] = $"Company '{company.Name}' deleted successfully. {company.Employees.Count} employees were reassigned.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"Company '{company.Name}' and {company.Employees.Count} associated employees deleted successfully.";
+                }
+
+                Console.WriteLine("Company deletion completed successfully");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during company deletion: {ex.Message}");
+                TempData["ErrorMessage"] = "An error occurred while deleting the company. Please try again.";
+                return RedirectToAction(nameof(Delete), new { id = id });
+            }
         }
 
         private bool CompanyExists(int id)
         {
             return _context.Companies.Any(e => e.Id == id);
         }
+    }
+
+    // View model for the delete confirmation page
+    public class CompanyDeleteViewModel
+    {
+        public Company Company { get; set; } = null!;
+        public int EmployeeCount { get; set; }
+        public List<Employee> Employees { get; set; } = new List<Employee>();
+        public List<SelectListItem> AvailableCompanies { get; set; } = new List<SelectListItem>();
     }
 }
