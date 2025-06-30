@@ -169,6 +169,26 @@ namespace AdminDashboard.Controllers
             return View(company);
         }
 
+        // GET: Companies/View/5
+        public async Task<IActionResult> View(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var company = await _context.Companies
+                .Include(c => c.Employees) 
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            return View(company);
+        }
+
         // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
