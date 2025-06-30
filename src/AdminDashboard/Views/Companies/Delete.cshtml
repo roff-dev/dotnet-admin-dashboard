@@ -138,7 +138,7 @@
             <i class="fas fa-info-circle"></i> This company has no associated employees. It can be safely deleted.
         </div>
 
-        <form asp-action="Delete">
+        <form asp-action="Delete" id="deleteForm">
             <input type="hidden" asp-for="Company.Id" />
             <input type="hidden" name="deleteAction" value="deleteAll" />
             <button type="button" class="btn btn-danger" onclick="confirmSimpleDelete()">

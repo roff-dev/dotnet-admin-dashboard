@@ -4,7 +4,7 @@
 
 <div class="dashboard">
     <div class="jumbotron bg-light">
-        <h1 class="display-4">Admin Dashboard</h1>
+        <h1 class="display-4">Dotnet Dash</h1>
         <p class="lead">Manage your companies and employees.</p>
     </div>
 
@@ -17,7 +17,7 @@
                         <h5 class="card-title">Companies</h5>
                         <div class="display-4 text-primary">@ViewBag.CompanyCount</div>
                     </div>
-                    <p class="card-text">View and manage company records, including contact information and logos.</p>
+                    <p class="card-text">View and manage company records, including contact information, logos, and related employees.</p>
                     <a asp-controller="Companies" asp-action="Index" class="btn btn-primary">Manage Companies</a>
                     <a asp-controller="Companies" asp-action="Create" class="btn btn-outline-primary">Add New</a>
                 </div>
@@ -52,28 +52,28 @@
                         <div class="col-md-3 col-sm-6 mb-3">
                             <div class="d-grid">
                                 <a asp-controller="Companies" asp-action="Create" class="btn btn-outline-primary btn-lg">
-                                    <i class="bi bi-building-add"></i> Add Company
+                                    <i class="bi bi-building-add mr-2"></i> Add Company
                                 </a>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
                             <div class="d-grid">
                                 <a asp-controller="Employees" asp-action="Create" class="btn btn-outline-success btn-lg">
-                                    <i class="bi bi-person-plus"></i> Add Employee
+                                    <i class="bi bi-person-plus mr-2"></i> Add Employee
                                 </a>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
                             <div class="d-grid">
                                 <a asp-controller="Companies" asp-action="Index" class="btn btn-outline-info btn-lg">
-                                    <i class="bi bi-search"></i> View Companies
+                                    <i class="bi bi-search mr-2"></i> View Companies
                                 </a>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
                             <div class="d-grid">
                                 <a asp-controller="Employees" asp-action="Index" class="btn btn-outline-dark btn-lg">
-                                    <i class="bi bi-people"></i> View Employees
+                                    <i class="bi bi-people mr-2"></i> View Employees
                                 </a>
                             </div>
                         </div>
